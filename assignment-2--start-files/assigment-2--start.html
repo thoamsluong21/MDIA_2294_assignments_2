@@ -1,0 +1,201 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>MDIA 2294</title>
+	
+	<style>	    
+	    img {
+	        margin:5px;
+	    }
+	    
+	    img.clickable{
+	        cursor:pointer;
+	    }
+	
+	</style>
+	
+</head>
+<body>
+
+	<h1>MDIA 2294: Assignment 2</h1>
+	
+	<div style="text-align:center;">
+	    <table>
+	        <tr>
+	            <td></td>
+	            <td style="text-align:center;">
+                    <div><img id="main-image" alt="Main Image" /></div>
+
+                    <!-- you may or may not use this hidden textbox-->
+                    <div><input id="current-index" /></div>    
+                </td>
+	            <td></td>
+	        
+	        </tr>
+	        <tr>
+	            <td>
+	                <img src="images/first.png" id="first-btn" />            
+	                <img src="images/prev.png" id="prev-btn" />
+	            </td>
+	            <td>
+	                <div id="thumbnail-area"></div>	        
+	            </td>
+	            <td>
+	                <img src="images/next.png" id="next-btn" />            
+	                <img src="images/last.png" id="last-btn" />
+	            </td>
+	        </tr>	    
+	    </table>       
+	</div>
+    
+	<script>
+
+		// The image_list variable is an array containing the root name for the images being used
+		const images_list  = ["main","back","back2","side","front"]
+
+		// here we are have the foot file folder inside a variable
+		const root_file = "images/"
+
+		// this is a variable for the ending root file name for the main images
+		const airtime_file = "_airtime.png"
+
+		// this is a variable for the ending root file name for the thumbnail images
+		const thumb_file = "_thumb.png"
+
+		// We are setting the main_img index to 0
+		let main_img = 0
+		
+		const first_load = () => { 
+	
+			// We are calling on the function set_main_image() and passing in the variable main_img which is our index value which then will set our main img with the first value in our array 
+			set_main_image(main_img)
+
+			// We are calling on the function set_thumbnails to set the thumbnails
+			set_thumbnails()
+
+			// This is called to update the thumbnails styles also passing in main_img to be the index to let the function know which style to put on the thumbnails
+			update_thumbnails(main_img)
+
+		}
+	
+		const set_main_image = (index) => {
+
+			// This is calling to the browser with queryselector that to the id with main-image to set the src img with the concatenation root file is the variable that contain the images folder images_list[index] is teh global variable that contains the array with all the roo names of the images and then user [index] from the parameters from the function input and then airtime_file is the ending root file name 
+			document.querySelector("#main-image").src = root_file + images_list[index] + airtime_file
+	
+			// TODO: set the hidden textbox to the current index (if you take this approach)	  
+			
+			
+			// this is now setting the main_img variable to the index passed into the parameter
+			main_img = index
+	
+			// we are calling the function update_thumbnails which is using our variable index to the parameter
+			update_thumbnails(index);
+
+		}
+	
+		const set_thumbnails = () => {
+
+			// Here we are looping through the images_list array with the forEach function we also have 2 parameters inside the forEach function. First we make a new_thumbnail variable which uses .create to create a new img tag in the document. Then with that new variable we are going to change the src with .src with the image_name variable parameter, along with the root_file variable and the thumb_file which is a global variable that has the ending root file name for the thumbnail. Then adding a class name with .className to new_thumbnail to make it clickable. Then adding a event listener to have a function when clicked and in this case when clicked we are going to call the function set_main_image with the index parameter which allows us to change the main image. Lastly calling to the dom to append each thumbnail image to the thumbnail-area with .append
+			images_list.forEach( (image_name, index) => {
+
+				const new_thumbnail = document.createElement("img") 
+
+				new_thumbnail.src = root_file + image_name + thumb_file
+
+				new_thumbnail.className = "clickable"
+
+				new_thumbnail.addEventListener("click", () => {
+					set_main_image(index)
+				})
+
+				document.querySelector("#thumbnail-area").append(new_thumbnail)
+
+			})
+
+		} 
+
+
+		const update_thumbnails = (current_index) => {
+
+			// Making a new variable that looks at of the img tag inside the thumbnail_area
+			const thumbnails = document.querySelectorAll("#thumbnail-area img");
+
+			// Now we are looping through the new variable with 2 parameters thumbnail & index and we are going use a ternary operator to determine what opacity we should have in the thumbnail in statement we are seeing if the index is the current index parameter which got it's value from set_main_image function then set the opacity to 1.0. Since it is loop through them all it's going to check and then set each style to it's correct opacity
+			thumbnails.forEach((thumbnail, index) => {
+				thumbnail.style.opacity = (index === current_index) ? "1.0" : "0.75";
+			});
+
+		} 
+	
+		const set_nav_first = () => {
+
+			// Variable to get the first button
+			const first_btn = document.querySelector("#first-btn")
+			
+			// We are then adding a event listener and in this case on click we are going to call on the function set_main_image and going to pass into the parameter of 0 since the first value of an index is always 0
+			first_btn.addEventListener("click", () =>{
+				set_main_image(0)
+			})
+
+		}
+		// We are calling the function so if it's click then it's going to run
+		set_nav_first()
+	
+		const set_nav_last = () => {
+			
+			// Variable to get the last button
+			const last_btn = document.querySelector("#last-btn")
+
+			// We are then adding a event listener and in this case on click we are going to call on the function set_main_image and going to pass into the parameter images_list.length - 1 which means that the length of any array will be - 1 which in result will in always getting the ending number because arrays count from 0 and length counts from 1 so we need the - 1
+			last_btn.addEventListener("click", () =>{
+				set_main_image(images_list.length - 1)
+			})
+
+		}
+		// We are calling the function so if it's click then it's going to run
+		set_nav_last()
+	
+		const set_nav_next = () => {
+
+			// Making a new variable that looks at of the img tag inside the thumbnail_area
+			const thumbnails = document.querySelectorAll("#thumbnail-area img");
+
+			// Variable to get the next button
+			const next_btn = document.querySelector("#next-btn")
+
+			// We are then adding a event listener and in this case on click we are going to call on the function set_main_image. First we are going to use a ternary operator to see what should be the next image. We are using the global main_img variable to check to see if it is greater or equal to the length - 1 of the images_list array if the main_img is equal to 4 then it is true and will return to 0 and then set the function set_main_image parameter index to 0 and if main_img is not greater than or equal to the images_list.length - 1 then the main_img will add 1 and then set the function set_main_image parameter index to main_img + 1 
+			next_btn.addEventListener("click", ()=>{
+				const next_index = (main_img >= images_list.length - 1) ? 0 : main_img + 1
+				set_main_image(next_index)
+			})
+			
+		}
+		// We are calling the function so if it's click then it's going to run
+		set_nav_next()
+	
+		const set_nav_prev = () => {
+
+			// Making a new variable that looks at of the img tag inside the thumbnail_area
+			const thumbnails = document.querySelectorAll("#thumbnail-area img");
+
+			// Variable to get the prev button
+			const next_btn = document.querySelector("#prev-btn")
+
+			// We are then adding a event listener and in this case on click we are going to call on the function set_main_image. First we are going to use a ternary operator to see what should be the next image. We are using the global main_img variable to check to see if main_img <= 0. If main_img is 0 then it is true and will return images_list.length - 1 which is the end of the array and will set the function set_main_image parameter index to images_list.length - 1 which is the end of the array and if the main_img is greater than 0 then prev_index will equal to main_img- 1 and set the  set_main_image parameter index to main_img - 1(current index)
+			next_btn.addEventListener("click", ()=>{
+				const prev_index = (main_img <= 0 ) ? images_list.length - 1 : main_img- 1
+				set_main_image(prev_index)
+			})
+
+		}
+		// We are calling the function so if it's click then it's going to run
+		set_nav_prev()
+
+		window.addEventListener("load", first_load);
+
+	</script>
+	
+</body>
+</html>
